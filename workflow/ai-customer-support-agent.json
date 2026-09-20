@@ -1,0 +1,12 @@
+{
+  "name": "AI Customer Support Agent",
+  "nodes": [],
+  "connections": {},
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed"
+  }
+}
