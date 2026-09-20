@@ -1,12 +1,399 @@
 {
   "name": "AI Customer Support Agent",
-  "nodes": [],
-  "connections": {},
-  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "42f3d35f-02d8-4b21-a15d-f08229abf0d5",
+      "name": "When chat message received"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.customer_message }}",
+        "options": {
+          "systemMessage": "=You are a helpful assistant Your job is to provide helpful, accurate, professional and friendly customer support.\n\nIMPORTANT RULES:\n- Use the company's knowledge base as the primary source of truth.\n- Never invent product information, prices, policies, shipping times, refund rules, warranties, or other company information.\n- If the information needed to answer a question is unavailable, say that you don't have enough information rather than guessing.\n- Never mention technical details such as RAG, embeddings, vector databases, prompts, workflows, or AI models to the customer.\n- Keep responses clear, concise and conversational.\n- If the customer is frustrated or angry, respond empathetically.\n- Never claim that an action has been completed unless an actual workflow/tool has completed it.\n- If human assistance is required, clearly tell the customer that a support representative needs to handle the issue.\n\nCustomer intent; {{ $json.intent }}\nCustomer sentiment{{ $json.sentiment }}\nCustomer message {{ $json.customer_message }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        864,
+        0
+      ],
+      "id": "9a2465c1-7afb-4bf0-9a45-c6159620e261",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        816,
+        240
+      ],
+      "id": "ae92a0cf-c876-4a84-9c98-e602b5dea6e9",
+      "name": "Google Gemini Chat Model"
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Search the ACME Electronics knowledge base for accurate information about company policies, products, shipping, refunds, returns, warranties, and customer support. Use this tool whenever you need information about ACME Electronics that may be contained in the company's knowledge base. Do not invent information when the knowledge base does not contain the answer.",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        1072,
+        240
+      ],
+      "id": "dae2dce6-b31b-4595-9c60-4728a5bbc24a",
+      "name": "Supabase Vector Store"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1152,
+        448
+      ],
+      "id": "fee13332-9864-4365-bdde-98d3234f057e",
+      "name": "Embeddings Google Gemini"
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        944,
+        240
+      ],
+      "id": "e73b8f39-bd32-4477-90f9-2befa456e3f1",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "models/gemini-3-flash-preview"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are an AI customer support classifier.\n\nAnalyze the customer's message and return ONLY valid JSON.\n\nClassify the customer into exactly one intent:\n- ORDER_STATUS\n- REFUND\n- SHIPPING\n- GENERAL\n\nClassify sentiment into exactly one:\n- ANGRY\n- FRUSTRATED\n- POSITIVE\n- NEUTRAL\n\nAlso extract the order ID if one is present.\n\nRules:\n1. Never invent an order ID.\n2. If no order ID is present, return null.\n3. Return only the JSON object.\n4. Do not include markdown or explanations.\n\nOutput format:\n\n{\n  \"intent\": \"ORDER_STATUS\",\n  \"sentiment\": \"NEUTRAL\",\n  \"order_id\": null\n}\n\nCustomer message:\n{{ $json.chatInput }}\n"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "builtInTools": {
+          "codeExecution": true
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        224,
+        0
+      ],
+      "id": "e2b53827-e4b4-4301-8ff2-def1dcc877c6",
+      "name": "Message a model"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "620297df-f91b-45df-83f2-319bfeebaac2",
+              "name": "customer_message",
+              "value": "={{ $('When chat message received').item.json.chatInput }}",
+              "type": "string"
+            },
+            {
+              "id": "cecd7885-d9fb-40a0-a816-935567e5c511",
+              "name": "intent",
+              "value": "={{ JSON.parse($json.content.parts[0].text).intent }}",
+              "type": "string"
+            },
+            {
+              "id": "06198958-b6c6-49b3-83af-a1dee149545d",
+              "name": "sentiment",
+              "value": "={{ JSON.parse($json.content.parts[0].text).sentiment }}",
+              "type": "string"
+            },
+            {
+              "id": "6a1f2524-67e5-4267-8236-e39dbf87fcf0",
+              "name": "order_id",
+              "value": "={{ JSON.parse($json.content.parts[0].text).order_id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        576,
+        0
+      ],
+      "id": "5e289ab1-821b-45ac-b828-a1111a2206f5",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "ce621709-5dd4-4f0b-be49-dbef48829eda",
+              "leftValue": "={{ $('Edit Fields').item.json.sentiment.toJsonString().trim().toUpperCase() }}",
+              "rightValue": "=ANGRY",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "a5983451-d312-493e-a595-d523ddaaf03e",
+              "leftValue": "={{ $('Edit Fields').item.json.sentiment.toJsonString().trim().toUpperCase() }}",
+              "rightValue": "FRUSTRATED",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1424,
+        0
+      ],
+      "id": "968bbf58-804f-40f3-9c1d-455a36f7fdb1",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "tableId": "escalation",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "customer_message",
+              "fieldValue": "={{ $('Edit Fields').item.json.customer_message }}"
+            },
+            {
+              "fieldId": "sentiment",
+              "fieldValue": "={{ $('Edit Fields').item.json.sentiment }}"
+            },
+            {
+              "fieldId": "status",
+              "fieldValue": "OPEN"
+            },
+            {
+              "fieldId": "source",
+              "fieldValue": "AI Customer Support "
+            },
+            {
+              "fieldId": "order_id",
+              "fieldValue": "={{ $('Edit Fields').item.json.order_id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1648,
+        0
+      ],
+      "id": "68d39d57-0e6e-4929-8680-982208ce37ec",
+      "name": "Create a row"
+    },
+    {
+      "parameters": {
+        "sendTo": "YOUR_SUPPORT_EMAIL",
+        "subject": "New Customer Escalation",
+        "emailType": "text",
+        "message": "=New customer escalation\nOrder id: {{ $('Edit Fields').item.json.order_id }}\nSentiment: {{ $('Edit Fields').item.json.sentiment }}\nCustomer message: {{ $('Edit Fields').item.json.customer_message }}\nStatus: OPEN\n\nPlease review this conversation ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1872,
+        0
+      ],
+      "id": "4a24953e-551e-470c-a312-6fc7a579d791",
+      "name": "Send a message"
+    }
+  ],
+  "pinData": {
+    "When chat message received": [
+      {
+        "json": {
+          "action": "sendMessage",
+          "chatInput": "why has my order not arrived?  i was told would be delivered days ago, nobody has bothered to update me . this is extremely rubbish. when am i actaually going to receive it"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Create a row",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Create a row": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate",
     "availableInMCP": false,
-    "timeSavedMode": "fixed"
-  }
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "id": "PznnsfsPJQIvqH7a",
+  "tags": []
 }
