@@ -18,6 +18,12 @@ The workflow is designed to answer customer questions using a business knowledge
 10. Logs an escalation in Supabase when required.
 11. Sends a notification to human support through Gmail.
 
+## Workflow Overview
+
+![AI Customer Support Agent workflow](screenshots/workflow-overview.png)
+
+The workflow connects the customer chat, AI analysis, AI Agent, knowledge retrieval, conversation memory, and human escalation path in one n8n workflow.
+
 ## Workflow architecture
 
 ```text
@@ -68,6 +74,12 @@ Escalation Check
 | Supabase | Stores escalation information |
 | Gmail | Notifies human support when escalation is required |
 
+## AI Agent & RAG
+
+![AI Agent and RAG components](screenshots/ai-agent-rag.png)
+
+The AI Agent uses Google Gemini as its chat model, Simple Memory for conversational context, and the Supabase Vector Store to retrieve relevant business knowledge.
+
 ## RAG knowledge retrieval
 
 The AI Agent is connected to a Supabase Vector Store. This allows the agent to retrieve relevant information from a business knowledge base instead of relying only on the model's general knowledge.
@@ -88,6 +100,9 @@ Example knowledge can include:
 
 ## Human escalation
 
+![Human escalation path](screenshots/escalation.png)
+
+
 The workflow includes a human-in-the-loop path for conversations that require additional attention.
 
 When an escalation condition is met, the workflow:
@@ -100,6 +115,10 @@ When an escalation condition is met, the workflow:
 ```text
 ai-customer-support-agent-n8n/
 ├── README.md
+├── screenshots/
+│   ├── workflow-overview.png
+│   ├── ai-agent-rag.png
+│   └── escalation.png
 ├── workflow/
 │   └── ai-customer-support-agent.json
 ├── docs/
