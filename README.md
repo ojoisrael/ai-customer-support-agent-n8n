@@ -193,3 +193,7 @@ I build AI-powered workflows, CRM automations, API integrations, and business pr
 ## Keywords
 
 n8n AI automation, AI customer support agent, n8n customer support workflow, Google Gemini AI agent, RAG customer support, Retrieval-Augmented Generation, Supabase Vector Store, semantic search, AI support automation, human-in-the-loop automation, customer service automation, knowledge base chatbot, LLM workflow automation
+
+## Security
+
+This repository contains a sanitized workflow intended for public learning and portfolio demonstration. Never commit real API keys, access tokens, passwords, webhook secrets, database credentials, or customer information. See [SECURITY.md](SECURITY.md) for reporting guidance and security practices.
