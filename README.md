@@ -114,7 +114,6 @@ Example knowledge can include:
 
 ![AI customer support human escalation workflow from n8n to Supabase and Gmail](screenshots/escalation.png)
 
-
 The workflow includes a human-in-the-loop path for conversations that require additional attention.
 
 When an escalation condition is met, the workflow:
@@ -188,7 +187,7 @@ Built by **Israel Ojo**, AI & Workflow Automation Specialist.
 I build AI-powered workflows, CRM automations, API integrations, and business process automations using tools such as n8n, Make.com, LLMs, and business platforms.
 
 - Portfolio: https://ojo-israel-portfolio.lovable.app
-- LinkedIn: https://www.linkedin.com/in/israel-ojo-514661394
+- LinkedIn: https://www.linkedin.com/in/ojo-israel-ai-and-workflow-automation
 
 ## Keywords
 
