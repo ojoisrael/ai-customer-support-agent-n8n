@@ -1,8 +1,20 @@
 # AI Customer Support Agent with n8n
 
-An AI-powered customer support workflow built with **n8n, Google Gemini, Supabase, RAG, conversation memory, and Gmail**.
+An **AI customer support agent built with n8n** that combines **Google Gemini, Retrieval-Augmented Generation (RAG), Supabase Vector Store, conversation memory, and human escalation**. It is designed to answer customer questions from a business knowledge base, maintain conversational context, analyze sentiment, and route conversations that need human attention to support staff.
 
-The workflow is designed to answer customer questions using a business knowledge base, keep conversational context, analyze customer sentiment, and escalate frustrated or angry customers to human support.
+This project demonstrates a practical **n8n AI automation workflow** for customer support, knowledge-base search, semantic retrieval, and human-in-the-loop escalation. The same architecture can be adapted for e-commerce support, product questions, order status, refunds, shipping, service businesses, and internal knowledge assistants.
+
+## Key capabilities
+
+- AI-powered customer support responses
+- Retrieval-Augmented Generation (RAG) for business-specific knowledge
+- Semantic search with Supabase Vector Store and Gemini embeddings
+- Conversation memory for multi-turn support interactions
+- Customer sentiment analysis
+- Human-in-the-loop escalation
+- Supabase escalation logging
+- Gmail support notifications
+- Sanitized n8n workflow export for learning and reuse
 
 ## What this automation does
 
@@ -20,7 +32,7 @@ The workflow is designed to answer customer questions using a business knowledge
 
 ## Workflow Overview
 
-![AI Customer Support Agent workflow](screenshots/workflow-overview.png)
+![n8n AI customer support agent workflow showing Gemini, RAG, Supabase Vector Store, memory, and human escalation](screenshots/workflow-overview.png)
 
 The workflow connects the customer chat, AI analysis, AI Agent, knowledge retrieval, conversation memory, and human escalation path in one n8n workflow.
 
@@ -76,7 +88,7 @@ Escalation Check
 
 ## AI Agent & RAG
 
-![AI Agent and RAG components](screenshots/ai-agent-rag.png)
+![n8n AI Agent with Google Gemini, conversation memory, Supabase Vector Store, and RAG](screenshots/ai-agent-rag.png)
 
 The AI Agent uses Google Gemini as its chat model, Simple Memory for conversational context, and the Supabase Vector Store to retrieve relevant business knowledge.
 
@@ -100,7 +112,7 @@ Example knowledge can include:
 
 ## Human escalation
 
-![Human escalation path](screenshots/escalation.png)
+![AI customer support human escalation workflow from n8n to Supabase and Gmail](screenshots/escalation.png)
 
 
 The workflow includes a human-in-the-loop path for conversations that require additional attention.
@@ -125,6 +137,10 @@ ai-customer-support-agent-n8n/
 │   └── architecture.md
 └── .env.example
 ```
+
+## How the workflow works
+
+The customer message enters n8n through the chat trigger. Google Gemini analyzes the message and extracts relevant information before the AI Agent generates a response. The agent can query the Supabase Vector Store to retrieve relevant business knowledge and uses conversation memory to maintain context. After the response, the workflow checks whether the conversation should be escalated. If escalation is required, the event is stored in Supabase and human support receives a Gmail notification.
 
 ## Importing the workflow
 
@@ -173,3 +189,7 @@ I build AI-powered workflows, CRM automations, API integrations, and business pr
 
 - Portfolio: https://ojo-israel-portfolio.lovable.app
 - LinkedIn: https://www.linkedin.com/in/israel-ojo-514661394
+
+## Keywords
+
+n8n AI automation, AI customer support agent, n8n customer support workflow, Google Gemini AI agent, RAG customer support, Retrieval-Augmented Generation, Supabase Vector Store, semantic search, AI support automation, human-in-the-loop automation, customer service automation, knowledge base chatbot, LLM workflow automation
