@@ -196,3 +196,7 @@ n8n AI automation, AI customer support agent, n8n customer support workflow, Goo
 ## Security
 
 This repository contains a sanitized workflow intended for public learning and portfolio demonstration. Never commit real API keys, access tokens, passwords, webhook secrets, database credentials, or customer information. See [SECURITY.md](SECURITY.md) for reporting guidance and security practices.
+
+---
+
+**Built by Ojo Israel — AI & Workflow Automation Specialist**
